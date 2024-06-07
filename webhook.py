@@ -139,7 +139,7 @@ def topLogin(data: list) -> None:
         "Content-Type": "application/json"
     }
 
-    requests.post(endpoint, json=jsonData, headers=headers)
+    #requests.post(endpoint, json=jsonData, headers=headers)
 
 
 def shop(item: str, quantity: str) -> None:
@@ -171,7 +171,7 @@ def shop(item: str, quantity: str) -> None:
         "Content-Type": "application/json"
     }
 
-    requests.post(endpoint, json=jsonData, headers=headers)
+    #requests.post(endpoint, json=jsonData, headers=headers)
 
 
 def drawFP(servants, missions) -> None:
@@ -220,4 +220,4 @@ def drawFP(servants, missions) -> None:
         "Content-Type": "application/json"
     }
 
-    requests.post(endpoint, json=jsonData, headers=headers)
+    #requests.post(endpoint, json=jsonData, headers=headers)
