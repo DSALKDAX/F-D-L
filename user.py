@@ -141,29 +141,13 @@ class user:
         self.builder_.Clean()
         return res
 
-    def topLogin(self):
+    def topLogin_s(self):
         DataWebhook = []  
         device_info = os.environ.get('DEVICE_INFO_SECRET')
         
-        private_key_pem = """
------BEGIN RSA PRIVATE KEY-----
-MIICWAIBAAKBgLkG1MbGaKzsCnfEz/v5Pv0mSffavUujhNKjmAAUdlBuE6v+uxMH
-ezdep9kH1FZRZHtYRjN1M6oeqckKVMhK82DMkoRxjCjwyknnM6VKO8uMbI3jbZwE
-jEv7yyNjxNIF7jVq5ifJujc13uainCQw2Y2UyJD3pmSgZp7xkt9vM9lVAgMBAAEC
-gYAdGhn1edeU+ztaQzaDZ1yk7JTNyzXi48FMcDbELHO/itDFSLeb8p1KxDSaSkT3
-nq2zSNsh1NlfdJs358wWBNPqrSBOEQGrcwUqob59mLQysxddE8HKN0kN7ZfLiebp
-y1xHxTqV1VEBmTlon9sMyYa5wbjJ8teSBQnvXP5JCnw2sQJAytZc/rIxKSazx2is
-os89qJFkzIEK4QhopCvSiDWarsYRi79KIxizrL0PCK0qAu6OXFsy5F2Ei+YXw++I
-Hhgx2wJA6YVwCKnGybW5hDKy7+XdFPpy0mhLxcGMWo9LQKCCSTKXqj6IOH3HOvnc
-iXN7NUf/TwN6mFzrsBHzyKrXJhAAjwJAnNIhMfW41nUKt9hw6KtLo4FNqmL2c0da
-B9utuQugnRGbzSzG992IRLwi3HVtLrkbrcIA1diLutHZe+48ke/o0wJANVdPogr1
-53llKPdTvEyrVXFn7Pv54vA1GTKGI/sGB6ZQ0oh6IT1J1wTgBV2llSQfA3Nt+4Ou
-KofPQdUUVBNvrQJAeFeVPpvWJTiMWCN2NMmJXqqdva8J1XIT047x5fdg72LcPOU+
-xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
------END RSA PRIVATE KEY-----
-        """
-        loaded_private_key = serialization.load_pem_private_key(
-            private_key_pem.encode('utf-8'), password=None, backend=default_backend())
+        with open('private_key.pem', 'rb') as f:
+            loaded_private_key = serialization.load_pem_private_key(
+                f.read(), password=None, backend=default_backend())
             
         def sign(uuid):
             signature = loaded_private_key.sign(
@@ -360,7 +344,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
             if bluebronzesapling > 0:
                 quantity = remaining_ap_int // 40
                 if quantity == 0:
-                    main.logger.info(f"\n {'=' * 40} \n [+] APが40未満の場合は購入できません (´･ω･`)? \n {'=' * 40} ")
+                    main.logger.info(f"\n ======================================== \n APが40未満の場合は購入できません (´･ω･`)? \n ======================================== ")
                     return
                 
                 if bluebronzesapling < quantity:
@@ -387,95 +371,35 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                             purchaseName = resSuccess['purchaseName']
                             purchaseNum = resSuccess['purchaseNum']
 
-                            main.logger.info(f"\n{'=' * 40}\n[+] {purchaseName} x{purchaseNum} 购买成功\n{'=' * 40}")
+                            main.logger.info(f"\n========================================\n[+] {purchaseNum}x {purchaseName} 购买成功\n========================================")
                             webhook.shop(purchaseName, purchaseNum)
             else:
-                main.logger.info(f"\n {'=' * 40} \n [+] ＞︿＜ 青銅の苗木が足りないヽ (*。>Д<)o゜ \n {'=' * 40} " )
+                main.logger.info(f"\n ======================================== \n ＞︿＜ 青銅の苗木が足りないヽ (*。>Д<)o゜ \n ======================================== " )
 
-
-
-
-
-    def LTO_Gacha(self):
-        # 10/16 【期間限定】「岸波白野ピックアップフレンドポイント召喚」！
-
-        nowAt = mytime.GetTimeStamp()
-        closedAt = 1730865599
-        
-        if nowAt > closedAt:
-            main.logger.info(f"\n {'=' * 40} \n [+] 期間限定召喚 已结束，当前时间：{nowAt} \n {'=' * 40} ")
-            return
-
-        with open('login.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-
-        user_svt_list = data.get('cache', {}).get('replaced', {}).get('userSvt', [])
-
-        found_svt = False 
-
-        for svt in user_svt_list:
-            svtId = svt.get('svtId')
-            if svtId in [2300800, 2300700]:  #岸波白野的SvtID
-                found_svt = True 
-                
-                gachaId = 3  #这个限定卡池有两个ID【 2 / 3 】懒得写判定，如果报错就用2
-                gachaSubId = 417  #这个限定卡池有两个ID【 416 / 417 】懒得写判定，如果报错就用416
-
-                self.builder_.AddParameter('storyAdjustIds', '[]')
-                self.builder_.AddParameter('selectBonusList', '')
-                self.builder_.AddParameter('gachaId', str(gachaId))
-                self.builder_.AddParameter('num', '10')
-                self.builder_.AddParameter('ticketItemId', '0')
-                self.builder_.AddParameter('shopIdIndex', '1')
-                self.builder_.AddParameter('gachaSubId', str(gachaSubId))
-                
-                main.logger.info(f"\n {'=' * 40} \n [+] 期間限定召喚 GachaId：{gachaId} SubId：{gachaSubId} \n {'=' * 40} ")
-                data = self.Post(f'{fgourl.server_addr_}/gacha/draw?_userId={self.user_id_}')
-                
-                responses = data['response']
-
-                servantArray = []
-                missionArray = []
-
-                for response in responses:
-                    resCode = response['resCode']
-                    resSuccess = response['success']
-
-                    if (resCode != "00"):
-                        continue
-
-                    if "gachaInfos" in resSuccess:
-                        for info in resSuccess['gachaInfos']:
-                            servantArray.append(
-                                gacha.gachaInfoServant(
-                                    info['objectId']
-                                )
-                            )
-
-                webhook.LTO_Gacha(servantArray)
-                return
-
-        if not found_svt:
-            main.logger.info(f"\n {'=' * 40} \n [+] 不满足活动条件..不能参加限定召唤 \n {'=' * 40} ")
-            return 
 
     def drawFP(self):
-        #SubID判定有点不准了.偶尔错误抽卡失败...等哪天闲暇再修
-        gachaSubId = GetGachaSubIdFP()
-
-        if gachaSubId is None:
-           gachaSubId = 0
-            
         self.builder_.AddParameter('storyAdjustIds', '[]')
-        self.builder_.AddParameter('selectBonusList', '')
         self.builder_.AddParameter('gachaId', '1')
         self.builder_.AddParameter('num', '10')
         self.builder_.AddParameter('ticketItemId', '0')
         self.builder_.AddParameter('shopIdIndex', '1')
-        self.builder_.AddParameter('gachaSubId', gachaSubId)
 
-        main.logger.info(f"\n {'=' * 40} \n [+] 友情卡池ID : {gachaSubId}\n {'=' * 40} " )
-        data = self.Post(f'{fgourl.server_addr_}/gacha/draw?_userId={self.user_id_}')
+        if main.fate_region == "NA":
+            gachaSubId = GetGachaSubIdFP("NA")
+            if gachaSubId is None:
+                gachaSubId = "0" 
+            self.builder_.AddParameter('gachaSubId', gachaSubId)
+            main.logger.info(f"\n ======================================== \n [+] 召唤卡池GachaSubId ： {gachaSubId} \n ======================================== " )
+        else:
+            gachaSubId = GetGachaSubIdFP("JP")
+            if gachaSubId is None:
+                gachaSubId = "0" 
+            self.builder_.AddParameter('gachaSubId', gachaSubId)
+            main.logger.info(f"\n ======================================== \n [+] 召唤卡池GachaSubId ： {gachaSubId} \n ======================================== " )
+
+        data = self.Post(
+            f'{fgourl.server_addr_}/gacha/draw?_userId={self.user_id_}')
+
         responses = data['response']
 
         servantArray = []
@@ -492,7 +416,7 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                 for info in resSuccess['gachaInfos']:
                     servantArray.append(
                         gacha.gachaInfoServant(
-                            info['objectId']
+                            info['isNew'], info['objectId'], info['sellMana'], info['sellQp']
                         )
                     )
 
@@ -511,20 +435,16 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
 
 
     def lq001(self):
-         # https://game.fate-go.jp/present/list?
+         # https://game.fate-go.jp/present/list?_userId=
           
         data = self.Post(
             f'{fgourl.server_addr_}/present/list?_userId={self.user_id_}')
         
         responses = data['response']
-        
-        with open('present.json', 'w', encoding='utf-8') as file:
-            json.dump(data, file, ensure_ascii=False, indent=4)
-            
-        main.logger.info(f"\n {'=' * 40} \n [+] 获得礼物盒数据 \n {'=' * 40} " )
+        main.logger.info(f"\n ======================================== \n [+] 读取礼物盒 \n ======================================== " )
 
     def lq002(self):
-         # https://game.fate-go.jp/present/receive?
+         # https://game.fate-go.jp/present/receive?_userId=
         with open('login.json', 'r', encoding='utf-8')as f:
             data = json.load(f)
 
@@ -535,14 +455,18 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
 
         with open('JJM.json', 'w') as f:
             json.dump(present_ids, f, ensure_ascii=False, indent=4)
-            
+
+        main.logger.info(f"\n ======================================== \n [+] 礼物盒内容解析完成 \n ======================================== " )
+
         time.sleep(1)
 
         if os.path.exists('JJM.json'):
             with open('JJM.json', 'r', encoding='utf-8') as file:
-                datas = json.load(file)
+                data1 = json.load(file)
 
-            msgpack_data = msgpack.packb(datas)
+            data = data1
+
+            msgpack_data = msgpack.packb(data)
 
             base64_encoded_data = base64.b64encode(msgpack_data).decode()
 
@@ -555,34 +479,26 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
     
             responses = data['response']
 
-            main.logger.info(f"\n {'=' * 40} \n [+] 领取成功 \n {'=' * 40} " )
+            main.logger.info(f"\n ======================================== \n [+] 领取成功 \n ======================================== " )
+        else:
+            main.logger.info(f"\n ======================================== \n [+] 没有物品可领取 \n ======================================== " )
 
     def lq003(self):
-        # https://game.fate-go.jp/shop/purchase
-        
+        # https://game.fate-go.jp/shop/purchase?
+
         url = 'https://git.atlasacademy.io/atlasacademy/fgo-game-data/raw/branch/JP/master/mstShop.json'
         response = requests.get(url)
 
         fdata = response.json()
         max_base_shop_id = None
         max_base_shop_s_id = None
-        max_base_lim_it_Num = None 
-        max_base_lim_it_s_Num = None 
-        max_base_prices = None
-        max_base_prices_s = None
-        max_base_name_s = '活动'
         num = None
 
         for item in fdata:
             if 4001 in item.get('targetIds', []) and item.get('flag') == 4096:
                 base_shop_id = item.get('baseShopId')
-                base_lim_it_Num = item.get('limitNum')
-                base_prices = item.get('prices')[0]
-                
                 if max_base_shop_id is None or base_shop_id > max_base_shop_id:
                     max_base_shop_id = base_shop_id
-                    max_base_lim_it_Num = base_lim_it_Num
-                    max_base_prices = base_prices
 
         if max_base_shop_id is not None:
             shopId = max_base_shop_id
@@ -599,14 +515,14 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
 
             if num_value is not None:
                 shopId = max_base_shop_id
-                num_ok = max_base_lim_it_Num - num_value
+                num_ok = 5 - num_value
                 if num_ok == 0:
-                   main.logger.info(f"\n {'=' * 40} \n 每月呼符 你已经兑换过了(´･ω･`) \n {'=' * 40} ")
+                   main.logger.info(f"\n ======================================== \n 每月呼符 你已经兑换过了(´･ω･`) \n ======================================== ")
                 else:
                     mana = gdata['cache']['replaced']['userGame'][0]['mana']
-                    mana_s = mana // max_base_prices
+                    mana_s = mana // 20
                     if mana_s == 0:
-                       main.logger.info(f"\n {'=' * 40} \n 魔力棱镜不足(´･ω･`) \n {'=' * 40} ")
+                       main.logger.info(f"\n ======================================== \n 魔力方块不足(´･ω･`) \n ======================================== ")
                     else:
                         if num_ok > mana_s:
                            num = mana_s
@@ -621,17 +537,13 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                 
                         responses = data['response'] 
                         if num is not None:
-                           main.logger.info(f"\n {'=' * 40} \n 已兑换 {num} 呼符 （每月）\n {'=' * 40} ")   
-                           namegift = "呼符（每月）"
-                           name = "呼符"
-                           object_id_count = num
-                           webhook.Present(name, namegift, object_id_count)
+                           main.logger.info(f"\n ======================================== \n 已兑换 {num} 呼符 （每月）\n ======================================== ")       
             else:
-                num_ok = max_base_lim_it_Num
+                num_ok = 5
                 mana = gdata['cache']['replaced']['userGame'][0]['mana']
-                mana_s = mana // max_base_prices
+                mana_s = mana // 20
                 if mana_s == 0:
-                   main.logger.info(f"\n {'=' * 40} \n 魔力棱镜不足(´･ω･`) \n {'=' * 40} ")
+                   main.logger.info(f"\n ======================================== \n 魔力方块不足(´･ω･`) \n ======================================== ")
                 else:
                     if num_ok > mana_s:
                        num = mana_s
@@ -645,48 +557,35 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                         f'{fgourl.server_addr_}/shop/purchase?_userId={self.user_id_}') 
                     
                     if num is not None:
-                        main.logger.info(f"\n {'=' * 40} \n 已兑换 {num} 呼符 （每月） \n {'=' * 40} ")
-                        namegift = "呼符（每月）"
-                        name = "呼符"
-                        object_id_count = num
-                        webhook.Present(name, namegift, object_id_count)
-                    
+                       main.logger.info(f"\n ======================================== \n 已兑换 {num} 呼符 （每月） \n ======================================== ")
 
         for item in fdata:
             if 4001 in item.get('targetIds', []) and item.get('flag') == 2048:
                 base_shop_s_id = item.get('baseShopId')
-                base_lim_it_s_Num = item.get('limitNum')
-                base_prices_s = item.get('prices')[0]
-                base_name_s = item.get('detail')
-                match = re.search(r'【(.*?)】', base_name_s)
-                base_name_ss = match.group(1)
-                
                 if max_base_shop_s_id is None or base_shop_s_id > max_base_shop_s_id:
                     max_base_shop_s_id = base_shop_s_id
-                    max_base_lim_it_s_Num = base_lim_it_s_Num
-                    max_base_prices_s = base_prices_s
-                    max_base_name_s = base_name_ss
 
         if max_base_shop_s_id is not None:
             shopId = max_base_shop_s_id
+
 
             for item in fdata:
                 if item.get('baseShopId') == max_base_shop_s_id:
                     closedAt = item.get('closedAt')
 
-                    response_time = mytime.GetTimeStamp()
-                    if response_time > 1700000000:
-                        current_time = response_time
+                    response = requests.get("http://worldtimeapi.org/api/timezone/Etc/UTC")
+                    if response.status_code == 200:
+                        current_time = response.json()['unixtime']
 
                         if current_time > closedAt:
-                            main.logger.info(f"\n {'=' * 40} \n 目前没有 绿方块活动(´･ω･`) \n {'=' * 40} ")
+                            main.logger.info(f"\n ======================================== \n 目前没有 绿方块活动(´･ω･`) \n ======================================== ")
                             return
                         else:
                             with open('login.json', 'r', encoding='utf-8') as file:
                                  gdata = json.load(file)
 
                             mana = gdata['cache']['replaced']['userGame'][0]['mana']
-                            mana_s = mana // max_base_prices_s
+                            mana_s = mana // 20
                             num_value = None
 
                             for item in gdata.get('cache', {}).get('updated', {}).get('userShop', []):
@@ -695,13 +594,13 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                                     break
 
                             if num_value is not None:
-                               num_ok = max_base_lim_it_s_Num - num_value
+                               num_ok = 5 - num_value
                                if num_ok == 0:
-                                   main.logger.info(f"\n {'=' * 40} \n {max_base_name_s}呼符 你已经兑换过了(´･ω･`) \n {'=' * 40} ")
+                                   main.logger.info(f"\n ======================================== \n 活动呼符 你已经兑换过了(´･ω･`) \n ======================================== ")
                                    return
                                else:
                                     if mana_s == 0:
-                                       main.logger.info(f"\n {'=' * 40} \n 魔力棱镜不足(´･ω･`) \n {'=' * 40} ")
+                                       main.logger.info(f"\n ======================================== \n 魔力方块不足(´･ω･`) \n ======================================== ")
                                     else:
                                         if num_ok > mana_s:
                                            num = mana_s
@@ -714,18 +613,13 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                                     data = self.Post(
                                         f'{fgourl.server_addr_}/shop/purchase?_userId={self.user_id_}') 
                                     if num is not None:
-                                        main.logger.info(f"\n {'=' * 40} \n 已兑换 {num} 呼符 // {max_base_name_s} \n {'=' * 40} ")
-                                        name = "呼符"
-                                        namegift = max_base_name_s
-                                        object_id_count = num
-                                        webhook.Present(name, namegift, object_id_count)
+                                       main.logger.info(f"\n ======================================== \n 已兑换 {num} 呼符 （限时活动）\n ======================================== ")
                             else:
-                                 num_ok = max_base_lim_it_s_Num
+                                 num_ok = 5
                                  mana = gdata['cache']['replaced']['userGame'][0]['mana']
-                                 mana_s = mana // max_base_prices_s
-                                
+                                 mana_s = mana // 20
                                  if mana_s == 0:
-                                    main.logger.info(f"\n {'=' * 40} \n 魔力棱镜不足(´･ω･`) \n {'=' * 40} ")
+                                    main.logger.info(f"\n ======================================== \n 魔力方块不足(´･ω･`) \n ======================================== ")
                                     return
                                  else:
                                      if num_ok > mana_s:
@@ -739,97 +633,16 @@ xCGlz9vV3+AAQ31C2phoyd/QhvpL85p39n6Ibg==
                                      data = self.Post(
                                          f'{fgourl.server_addr_}/shop/purchase?_userId={self.user_id_}') 
                                      if num is not None:
-                                         main.logger.info(f"\n {'=' * 40} \n 已兑换 {num} 呼符 // {max_base_name_s} \n {'=' * 40} ")
-                                         name = "呼符"
-                                         namegift = max_base_name_s
-                                         object_id_count = num
-                                         webhook.Present(name, namegift, object_id_count)
+                                        main.logger.info(f"\n ======================================== \n 已兑换 {num} 呼符 （限时活动） \n ======================================== ")
                     else:
-                        main.logger.info(f"\n {'=' * 40} \n [+] 和游戏服务器时间戳不一致 \n {'=' * 40}")
+                        main.logger.info(f"时间服务器连接失败")
 
-    
-    def Present(self):
-        #素材交換券
-        response = requests.get("https://api.atlasacademy.io/export/JP/nice_item.json")
-        if response.status_code == 200:
-            with open("nice_item.json", 'wb') as f:
-                f.write(response.content)
-                
-        with open('present.json', 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            
-        user_present_box = data.get('cache', {}).get('replaced', {}).get('userPresentBox', [])
-        
-        first_object_id = None
-        object_id_count = 0
-        object_ids = []
-        presentIds = []
 
-        for item in user_present_box:
-            if item.get('giftType') == 2:
-                object_id = item.get('objectId')
-                presentId = item.get('presentId')
-    
-                if object_id and 10000 <= object_id <= 20000:
-                    if first_object_id is None:
-                        first_object_id = object_id
-                        
-                if object_id == first_object_id:
-                    object_id_count += 1
-                    object_ids.append(str(object_id))
-                    presentIds.append(str(presentId))
 
-                    datajs = [int(present_id) for present_id in presentIds]
 
-                    with open('Ticket.json', 'w') as f:
-                        json.dump(datajs, f, ensure_ascii=False)
-                else:
-                    continue
 
-        if first_object_id is not None:
-           
-           with open('nice_item.json', 'r', encoding='utf-8') as file:
-               itemdata = json.load(file)
-    
-           item_data = next((item for item in itemdata if item.get('id') == first_object_id), None)
-    
-           if item_data:
-               name = item_data.get('name', 'None')
-               item_selects = item_data.get('itemSelects', [])
-            
-               if item_selects:
-                   random_item = random.choice(item_selects)
-                   idxs = random_item.get('idx')
-                   gifts = random_item.get('gifts', [])
-                
-                   for gift in gifts:
-                       object_id = gift.get('objectId')
-                       
-                   item_name = next((item for item in itemdata if item.get('id') == object_id), None)
-                   namegift = item_name.get('originalName', 'None')
 
-                   with open('Ticket.json', 'r', encoding='utf-8') as file:
-                       presentdata = json.load(file)
 
-                   msgpack_data = msgpack.packb(presentdata)
-
-                   base64_encoded_data = base64.b64encode(msgpack_data).decode()
-                   
-                   self.builder_.AddParameter('presentIds', base64_encoded_data)
-                   self.builder_.AddParameter('itemSelectIdx', str(idxs))
-                   self.builder_.AddParameter('itemSelectNum', str(object_id_count))
-
-                   data = self.Post(
-                       f'{fgourl.server_addr_}/present/receive?_userId={self.user_id_}')
-    
-                   responses = data['response']
-
-                   main.logger.info(f"\n {'=' * 40} \n [+] {name} 兑换成功 \n {'=' * 40} " )
-        
-                   webhook.Present(name, namegift, object_id_count)
-                   
-        else:
-            main.logger.info(f"\n {'=' * 40} \n [+] 礼物盒中交換券なし(´･ω･`) \n {'=' * 40} ")
 
 
 

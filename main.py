@@ -10,10 +10,10 @@ import logging
 userIds = os.environ['userIds'].split(',')
 authKeys = os.environ['authKeys'].split(',')
 secretKeys = os.environ['secretKeys'].split(',')
+fate_region = os.environ['fateRegion']
 webhook_discord_url = os.environ['webhookDiscord']
 device_info = os.environ.get('DEVICE_INFO_SECRET')
 user_agent_2 = os.environ.get('USER_AGENT_SECRET_2')
-fate_region = 'JP'
 
 userNums = len(userIds)
 authKeyNums = len(authKeys)
@@ -28,13 +28,7 @@ def get_latest_verCode():
     response_data = json.loads(response)
 
     return response_data['verCode']
-    
-def get_latest_appver():
-    endpoint = "https://raw.githubusercontent.com/DNNDHH/FGO-VerCode-extractor/JP/VerCode.json"
-    response = requests.get(endpoint).text
-    response_data = json.loads(response)
 
-    return response_data['appVer']
 
 
 def main():
@@ -43,23 +37,20 @@ def main():
         for i in range(userNums):
             try:
                 instance = user.user(userIds[i], authKeys[i], secretKeys[i])
+                time.sleep(3)
+                logger.info(f"\n ======================================== \n [+] 登录账号 \n ======================================== " )
+
                 time.sleep(1)
-                logger.info(f"\n {'=' * 40} \n [+] 登录账号 \n {'=' * 40} " )
-                instance.topLogin()
+                instance.topLogin_s()
                 time.sleep(2)
                 instance.topHome()
-                time.sleep(0.5)
+                time.sleep(2)
                 instance.lq001()
-                time.sleep(0.5)
-                instance.Present()
-                time.sleep(0.5)
                 instance.lq002()
                 time.sleep(2)
                 instance.buyBlueApple()
                 time.sleep(1)
                 instance.lq003()
-                time.sleep(1)
-                instance.LTO_Gacha()
                 time.sleep(1)
                 instance.drawFP()
 
