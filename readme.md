@@ -1,6 +1,15 @@
-# FGO每日自动登录
+> [!WARNING]
+> 由于出现很多复制下载此存储库后又重新上传发布冒充的情况
+> 
+> 源项目所属 【FGODailyBonus -> FGO-Daily-Login -> F-D-L】
+> 
+> 特此提醒，使用本存储库以外类似存储库的代码前，应检查代码是存在否异常行为防止出现盗号和其它损失！
 
-<img width="33%" style="border: 1px solid black" src="https://i.imgur.com/azBO1qu.png">
+
+
+ # FGO每日自动登录
+
+<img width="40%" style="border: 1px solid black" src="./libs/2024-10-20 204307.png">
 
 🤓这么多年来…就目前来说有那么亿点点封号风险(^_-)-☆
 
@@ -56,13 +65,14 @@ adb shell cp /storage/emulated/0/Android/data/com.aniplex.fategrandorder/files/d
 
 
 # 4. 创建 Discord 消息通知机器人
-要创建 webhook Discord，您需要在 Discord 中创建一个服务器 并在该频道的 设置中 创建一个 文本频道
-`integration > webhook > create webhook > copy url webhook`
+- 要创建 Webhook Discord，您需要在 Discord 中创建一个服务器 并在该频道的 设置中 创建一个 文本频道
+- `integration > webhook > create webhook > copy url webhook`
+- 复制获得的 Webhook URL 填写到 DISCORD_WEBHOOK 
 
 
 # 5. 填写 Github Secrets
 
-将下列 密钥类型 和 对应的值 添加到 `右上角 > settings > Secrets and variables > actions`
+创建 密钥类型，并将之前步骤获得的数值 填写到 对应的 密钥类型 中 `右上角 > settings > Secrets and variables > actions`
 <img width="75%" style="border: 1px solid black" src="https://i.imgur.com/J7jb6TX.png">
 
 需要登录多个账号时使用 英文逗号
@@ -76,7 +86,6 @@ adb shell cp /storage/emulated/0/Android/data/com.aniplex.fategrandorder/files/d
 | GAME_AUTHKEYS | RaNdOmStRiNg1234:randomAAAAA=,RaNdOmStRiNg1235:randomAAAAA= |
 | GAME_SECRETKEYS | RaNdOmStRiNg1234:randomAAAAA=,RaNdOmStRiNg1235:randomAAAAA= |
 | GAME_USERIDS | 1234,1235 |
-| GAME_REGION | JP |
 | USER_AGENT_SECRET_2 | Dalvik/2.1.0 (Linux; U; Android 14; Pixel 5 Build/UP1A.231105.001) 建议不要照抄 |
 | DEVICE_INFO_SECRET | Google Pixel 5 / Android OS 14 / API-34 (UP1A.231105.001/10817346) 建议不要照抄 |
 | DISCORD_WEBHOOK | https://discord.com/api/webhooks/randomNumber/randomString |
@@ -104,10 +113,11 @@ adb shell cp /storage/emulated/0/Android/data/com.aniplex.fategrandorder/files/d
 - -------------------------------------------------------------------------------------- -
 
 # 已完成 
-- [x] 自动每日友情点召唤
+- [x] 自动每日友情召唤/友情活动限定召唤
 - [x] 自动种蓝苹果🍎
 - [x] 自动领取礼物盒
 - [x] 自动兑换达芬奇商店 每月&限时活动 呼符
+- [x] 自动兑换 素材交換券
 - -------------------------------------------------------------------------------------- -
 # 未来计划 （咕咕咕🤣）
 - [ ] 待定…
