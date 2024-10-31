@@ -227,9 +227,10 @@ def drawFP(servants, missions) -> None:
     requests.post(endpoint, json=jsonData, headers=headers)
 
 
-def LTO_Gacha(servants) -> None:
+def LTO_Gacha(servants, missions) -> None:
     endpoint = main.webhook_discord_url
 
+    message_mission = ""
     message_servant = ""
     
     if (len(servants) > 0):
@@ -246,12 +247,16 @@ def LTO_Gacha(servants) -> None:
             else:
                 continue
 
+    if(len(missions) > 0):
+        for mission in missions:
+            message_mission += f"__{mission.message}__\n{mission.progressTo}/{mission.condition}\n"
+
     jsonData = {
         "content": None,
         "embeds": [
             {
                 "title": "FGO限定抽卡 - " + main.fate_region,
-                "description": f"完成限定友情抽卡。列出抽卡结果.",
+                "description": f"完成限定友情抽卡。列出抽卡结果.\n\n{message_mission}",
                 "color": 16711680,
                 "fields": [
                     {
